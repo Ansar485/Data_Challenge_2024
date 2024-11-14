@@ -19,10 +19,10 @@ data['Yearly_GDP'] = data.groupby('Year')['GDP'].transform('sum') # calculating 
 train_data = data.iloc[:28] # 60% of the data was used to train
 test_data = data.iloc[28:] # 40% of the date was used to test
 
-gdp_2023_q4 = data.loc['2023-10-01', 'Yearly_GDP']
-print(gdp_2023_q4)
-doubled_gdp_2023_q4 = 2 * gdp_2023_q4
-print(doubled_gdp_2023_q4)
+gdp_2023 = data.loc['2023-10-01', 'Yearly_GDP']
+print(gdp_2023)
+doubled_gdp_2023 = 2 * gdp_2023
+print(doubled_gdp_2023)
 
 
 
@@ -42,23 +42,22 @@ model = SARIMAX(train_data['GDP'],
                 seasonal_order=best_seasonal_order,
                 enforce_stationarity=False,
                 enforce_invertibility=False,
-                trend = 'ct')
+                trend = 't')
 results = model.fit()
 
 # Forecast the next 10 observations (matching the length of the test data)
-forecast_steps = len(test_data) + 100
+forecast_steps = len(test_data) + 48
 forecast = results.get_forecast(steps=forecast_steps)
 forecast_values = forecast.predicted_mean
 forecast_ci = forecast.conf_int()
 
-yearly_forecast = forecast_values.resample('Y').sum()
+yearly_forecast = forecast_values.resample('YE').sum()
 
 # Find the year when the forecasted yearly GDP exceeds the doubled GDP of 2023 Q4
-year_reached = yearly_forecast[yearly_forecast >= doubled_gdp_2023_q4].index[0].year
+year_reached = yearly_forecast[yearly_forecast >= doubled_gdp_2023].index[0].year
 
 # Display the year when the doubled GDP of 2023 is expected to be reached
 print(year_reached)
-
 
 # Calculate evaluation metrics
 mae = mean_absolute_error(test_data['GDP'], forecast_values[:len(test_data)])
@@ -75,18 +74,14 @@ plt.plot(forecast_values.index, forecast_values, label='Forecasted GDP', color='
 plt.fill_between(forecast_values.index, forecast_ci.iloc[:, 0], forecast_ci.iloc[:, 1], color='orange', alpha=0.2)
 
 
-# Find the date when forecasted GDP reaches this doubled value
-reached_date = forecast_values[forecast_values >= doubled_gdp_2023_q4].index[0]
-reached_year = reached_date.year
 
-# Plot the horizontal and vertical lines
-plt.axhline(y=doubled_gdp_2023_q4, color='purple', linestyle='--', label=f'Doubled GDP of 2023 Q4 = {round(doubled_gdp_2023_q4, 3)}')
-plt.axvline(x=reached_date, color='red', linestyle='--', label=f'Year reached: {reached_year}')
+# Plot the vertical lines
+plt.axvline(x = pd.to_datetime(year_reached, format='%Y'), color='red', linestyle='--', label=f'Year reached: {year_reached}')
 
 
 # Customize the plot
 plt.xlabel('Date')
-plt.ylabel('GDP (in trillions ₸')
+plt.ylabel('GDP (in trillions ₸)')
 plt.title('SARIMA GDP (in trillions ₸) Forecast with Extended Prediction')
 plt.legend()
 plt.grid(True)
