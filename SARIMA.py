@@ -16,15 +16,13 @@ data['GDP'] = data['GDP']/1000000 #converting GDP into trillions
 data['Yearly_GDP'] = data.groupby('Year')['GDP'].transform('sum') # calculating Yearly GDP
 
 
-train_data = data.iloc[:28] # 60% of the data was used to train
-test_data = data.iloc[28:] # 40% of the date was used to test
+train_data = data.iloc[:31] # 70% of the data was used to train
+test_data = data.iloc[31:] # 30% of the date was used to test
 
 gdp_2023 = data.loc['2023-10-01', 'Yearly_GDP']
 print(gdp_2023)
 doubled_gdp_2023 = 2 * gdp_2023
 print(doubled_gdp_2023)
-
-
 
 # Use auto_arima to find the best SARIMA model for the training data
 stepwise_fit = auto_arima(train_data['GDP'],
@@ -36,16 +34,18 @@ stepwise_fit = auto_arima(train_data['GDP'],
                           stepwise=True)
 
 best_order = stepwise_fit.order
+print(f'Best Order: {best_order}')
 best_seasonal_order = stepwise_fit.seasonal_order
+print(f'Best Seasonal Order: {best_seasonal_order}')
 model = SARIMAX(train_data['GDP'],
                 order=best_order,
                 seasonal_order=best_seasonal_order,
                 enforce_stationarity=False,
                 enforce_invertibility=False,
-                trend = 't')
+                trend = 'ct')
 results = model.fit()
 
-# Forecast the next 10 observations (matching the length of the test data)
+# Forecast the next observations (matching the length of the test data)
 forecast_steps = len(test_data) + 48
 forecast = results.get_forecast(steps=forecast_steps)
 forecast_values = forecast.predicted_mean
@@ -81,8 +81,8 @@ plt.axvline(x = pd.to_datetime(year_reached, format='%Y'), color='red', linestyl
 
 # Customize the plot
 plt.xlabel('Date')
-plt.ylabel('GDP (in trillions ₸)')
-plt.title('SARIMA GDP (in trillions ₸) Forecast with Extended Prediction')
+plt.ylabel('Quarterly GDP (in trillions ₸)')
+plt.title('SARIMA Quarterly GDP (in trillions ₸) Forecast with Extended Prediction')
 plt.legend()
 plt.grid(True)
 plt.xticks(fontsize=8, rotation=45)

@@ -10,17 +10,18 @@ data.set_index(keys = 'Date', inplace=True)
 
 # Plotting
 plt.figure(figsize=(10, 6))
-plt.plot(data.index, data['GDP'], marker='o', color='b', label='Nominal GDP')
+plt.plot(data.index, data['GDP'], marker='o', color='b', label='Quarterly GDP')
 
 # Adding labels and title
-plt.ylabel('GDP')
-plt.title('GDP Over Time')
+plt.ylabel('Quarterly GDP')
+plt.title('Quarterly GDP Over Time')
 plt.grid(True)
 plt.legend()
 plt.tight_layout()
-plt.xticks(fontsize = 8,rotation = 45)
+plt.xticks(ticks=range(0, len(data.index), 4), labels=data.index[::4], fontsize=8)
 
 # Display the plot
+plt.savefig('graphs/GDP_Current_Trend.png')
 plt.show()
 
 # Augmented Dickey-Fuller test for Stationarity
@@ -32,8 +33,6 @@ if result[1] > 0.05:
 else:
     print('Stationary')
 
-
-
 # Autocorrelation plot
 plt.figure(figsize=(10, 6))
 plot_acf(data['GDP'], lags = 12, title = "Autocorrelation of Quarterly GDP")
@@ -41,6 +40,7 @@ plt.xlabel('Lag (Quarters)')
 plt.ylabel('Autocorrelation')
 plt.grid(True)
 plt.tight_layout()
+plt.savefig('graphs/Autocorrelation.png')
 plt.show()
 
 # We can see that our GDP data is non-stationary and has statistically significant autocorrelation at lag = 4 (indicating yearly correlation)
@@ -118,7 +118,7 @@ plt.ylabel("GDP Contribution (in monetary units)")
 plt.xticks(rotation=90)
 plt.legend(title="Sector", bbox_to_anchor=(1.05, 1), loc='upper left', ncol=2)
 plt.tight_layout()
-plt.savefig('GDP_by_sectors_historical_abs.png')
+plt.savefig('graphs/GDP_by_sectors_historical_abs.png')
 plt.show()
 
 
@@ -153,6 +153,6 @@ plt.xticks(rotation=90)
 # Set up legend with smaller font size
 plt.legend(title="Sector", bbox_to_anchor=(1.05, 1), loc='upper left', ncol=2, fontsize='small', title_fontsize='small')
 plt.tight_layout()
-plt.savefig('GDP_by_sectors_historical_share.png')
+plt.savefig('graphs/GDP_by_sectors_historical_share.png')
 plt.show()
 
