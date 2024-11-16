@@ -1,6 +1,6 @@
 # README
 ### Notes
-If pmdarima library is not properly working with the your numpy library, try downgrading your numpy to _numpy==1.26.4_.
+If pmdarima library is not properly working with your numpy library, try downgrading your numpy before _numpy==2.0.0_. For example, _numpy==1.26.4_ should work just fine.
 
 ## Preface
 This project is a collaborative effort by [Ansar Serkesh](https://www.linkedin.com/in/ansarserkesh), [Darina Sydykova](https://www.linkedin.com/in/darina-sydykova-992055265/), [Altair Abdrakhman](https://www.linkedin.com/in/altair-abdrakhman-6b3186152/), and [Dilnaz Anashbayeva](https://www.linkedin.com/in/anashbayeva/). We express our gratitude to [The NU Data Science Club](https://www.instagram.com/nu_datasci/) for organizing this Data Challenge and to [The Development Bank of Kazakhstan](https://www.kdb.kz/en/) for their sponsorship.
